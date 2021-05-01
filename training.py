@@ -5,7 +5,7 @@ from numpy.lib.function_base import place
 #### Hyperparameters ####
 SIZE = 10
 ACTION_SPACE = 9
-TOTAL_EPISODES = 10000
+TOTAL_EPISODES = int(1e5)
 
 MAX_STEPS = 10 #STATE_SPACE
 
@@ -75,7 +75,7 @@ class Environment:
             reward = -200
         else:
             if (self.player == self.food).all():
-                reward = 0
+                reward = 10
             else:
                 reward = -1
                 new_state = np.array([self.player, self.food])
@@ -89,8 +89,11 @@ class Environment:
 
 #### Q-learning algorithm and training ####
 env = Environment()
+SHOW_EVERY = 500
 
 for episode in range(TOTAL_EPISODES):
+    if episode % SHOW_EVERY == 0 or episode == TOTAL_EPISODES-1:
+        print('Episode:', episode)
     # Reset environment
     state = env.reset()
 
@@ -115,10 +118,4 @@ for episode in range(TOTAL_EPISODES):
         state = new_state
 
 # Save Q table
-try:
-    geeky_file = open('Q-table.txt', 'wt')
-    geeky_file.write(str(Q))
-    geeky_file.close()
-  
-except:
-    print("Unable to write to file")
+np.save('Q-table.npy',Q)
