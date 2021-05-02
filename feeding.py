@@ -5,9 +5,15 @@ import numpy as np
 Q = np.load('Q-table.npy', allow_pickle=True)
 
 #### initialize pygame #########
+SIZE = 700
 pygame.init()
 pygame.display.set_caption('Feedding game')
-screen = pygame.display.set_mode((600,600))
+screen = pygame.display.set_mode((SIZE,SIZE))
+
+Player = pygame.image.load('zombie.png')
+Player_rect = Player.get_rect()
+Food = pygame.image.load('screaming.png')
+Food_rect = Food.get_rect()
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -16,6 +22,12 @@ RED = (255,0,0)
 BLUE = (0,0,255)
 GREEN = (190,230,90)
 PURPLE = (148,0,188)
+
+escale = SIZE//10
+############# Used Functions ###################
+# Given pos in discrete grid coordinates, returns location on the screen (pixels) coordinates
+def to_mapCoordinates(pos):
+    return escale * np.flipud(pos)# + escale//2
 
 
 ############# Game Loop #################
@@ -27,11 +39,13 @@ while running:
         if event.type == pygame.QUIT: running = False
 
     screen.fill(WHITE)
-    escale = 60
     for i in range(1,10):
-        pygame.draw.line(screen, GRAY, (0,i*escale), (600-1, i*escale), 3)
+        pygame.draw.line(screen, GRAY, (0,i*escale), (SIZE-1, i*escale), 3)
     for i in range(1,10):
-        pygame.draw.line(screen, GRAY, (i*escale,0), (i*escale,600-1), 3)
+        pygame.draw.line(screen, GRAY, (i*escale,0), (i*escale,SIZE-1), 3)
+
+    pos = to_mapCoordinates(np.array([0,0], dtype=int))
+    screen.blit(Player, pos)
 
 
 
