@@ -30,9 +30,21 @@ def to_mapCoordinates(pos):
     return escale * np.flipud(pos)# + escale//2
 
 
+class Environment:
+    def __init__(self):
+        self.player_pos = np.array([0,0], dtype=int)
+        self.food_pos = np.array([0,0], dtype=int)
+
+    def respawn(self):
+        rand_state = np.random.randint(low=0, high=10, size=4)
+        self.player_pos = rand_state[0:2]
+        self.food_pos = rand_state[2:4]
+
+
 ############# Game Loop #################
 running = True
 game_time = 10
+step = 0
 
 while running:
     for event in pygame.event.get():
@@ -44,8 +56,9 @@ while running:
     for i in range(1,10):
         pygame.draw.line(screen, GRAY, (i*escale,0), (i*escale,SIZE-1), 3)
 
-    pos = to_mapCoordinates(np.array([0,0], dtype=int))
-    screen.blit(Player, pos)
+    pos = to_mapCoordinates(np.array([9,9], dtype=int))
+
+    screen.blit(Food, pos)
 
 
 
