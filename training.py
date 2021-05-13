@@ -82,7 +82,6 @@ class Environment:
                 
                 done =  False
 
-
         new_state = np.array([self.player, self.food])
         new_state = np.reshape(new_state, (1,4))[0]
         new_state = tuple(new_state)
