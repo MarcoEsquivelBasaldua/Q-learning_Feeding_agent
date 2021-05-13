@@ -25,7 +25,9 @@ for i_player in range(SIZE):
     for j_player in range(SIZE):
         for i_food in range(SIZE):
             for j_food in range(SIZE):
-                Q[(i_player,j_player,i_food,j_food)] = actions.tolist()
+                state = np.array([i_player,j_player,i_food,j_food])
+                state = np.array2string(state, separator = ',')
+                Q[state] = actions.tolist()
 
 ############ Epsilon-Greedy policy ##############
 def epsilon_greedy_policy(state, epsilon):
@@ -49,7 +51,7 @@ class Environment:
         self.food = rand_state[2:4]
 
         #return tuple(map(tuple, rand_state))
-        return tuple(rand_state)
+        return rand_state
 
     def step(self, action):
         if action == 1:
@@ -85,7 +87,6 @@ class Environment:
 
         new_state = np.array([self.player, self.food])
         new_state = np.reshape(new_state, (1,4))[0]
-        new_state = tuple(new_state)
 
         return new_state, reward, done
 
@@ -106,20 +107,20 @@ for episode in range(TOTAL_EPISODES):
     epsilon = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * np.exp(-DECAY_RATE * episode-1)
 
     for step in range(MAX_STEPS):
-        #state_str = np.array2string(state, separator = ',')
+        state_str = np.array2string(state, separator = ',')
         #state_str = state.tobytes()
-        action = epsilon_greedy_policy(state, epsilon)
+        action = epsilon_greedy_policy(state_str, epsilon)
 
         # Take action and observe outcome state and reward
         new_state, reward, done = env.step(action)
-        #new_state_str = np.array2string(new_state, separator = ',')
+        new_state_str = np.array2string(new_state, separator = ',')
         #new_state_str = new_state.tobytes()
 
         # Update Q(s,a) <- Q(s,a) + lr [R(s,a) + gamma * max(Q(s',a')) - Q(s,a)]
         try:
-            Q[state][action] = Q[state][action] + LEARNING_RATE * (reward + GAMMA * np.max(Q[new_state]) - Q[state][action])
+            Q[state_str][action] = Q[state_str][action] + LEARNING_RATE * (reward + GAMMA * np.max(Q[new_state_str]) - Q[state_str][action])
         except:
-            Q[state][action] = -np.inf
+            Q[state_str][action] = -np.inf
 
         if done:
             break
@@ -132,6 +133,6 @@ end = time.time()
 print(end - start)
 
 # Save Q table
-np.save('Q-table.npy',Q)
-#with open('Q_table.json', 'w') as f:
-#    json.dump(Q, f, indent=4)
+#np.save('Q-table.npy',Q)
+with open('Q_table.json', 'w') as f:
+    json.dump(Q, f, indent=4)
