@@ -1,19 +1,21 @@
 import pygame
 import numpy as np
-import json
+import copy
 
 ##### Load trined Q-table ###
 #with open('Q_table.json', 'r') as f:
 #    Q = json.load(f)
 Q = np.load('Q-table.npy', allow_pickle= True)
-print(Q.item().get((0, 0, 0, 0)))
+print(type(Q))
+#print(Q.item().get((0, 0, 0, 0)))
 
 
 #### initialize pygame #########
-SIZE = 700
+SIZE = 10
+SIZE_MAP = 700
 pygame.init()
 pygame.display.set_caption('Feedding game')
-screen = pygame.display.set_mode((SIZE,SIZE))
+screen = pygame.display.set_mode((SIZE_MAP,SIZE_MAP))
 
 Player = pygame.image.load('zombie.png')
 Player_rect = Player.get_rect()
@@ -28,7 +30,7 @@ BLUE = (0,0,255)
 GREEN = (190,230,90)
 PURPLE = (148,0,188)
 
-escale = SIZE//10
+escale = SIZE_MAP//10
 ############# Used Functions ###################
 # Given pos in discrete grid coordinates, returns location on the screen (pixels) coordinates
 def to_mapCoordinates(pos):
@@ -49,9 +51,9 @@ class Environment:
     def draw(self):
         screen.fill(WHITE)
         for i in range(1,10):
-            pygame.draw.line(screen, GRAY, (0,i*escale), (SIZE-1, i*escale), 3)
+            pygame.draw.line(screen, GRAY, (0,i*escale), (SIZE_MAP-1, i*escale), 3)
         for i in range(1,10):
-            pygame.draw.line(screen, GRAY, (i*escale,0), (i*escale,SIZE-1), 3)
+            pygame.draw.line(screen, GRAY, (i*escale,0), (i*escale,SIZE_MAP-1), 3)
 
         Player_map = to_mapCoordinates(self.player_pos)
         Food_map = to_mapCoordinates(self.food_pos)
@@ -69,7 +71,7 @@ class Environment:
 
     def food_move(self):
         action =  np.random.randint(low=0, high=8, size=1)
-        pos = self.food_pos
+        pos = copy.deepcopy(self.food_pos)
         
         if action == 1:
             pos += np.array((0, 1))
@@ -148,18 +150,6 @@ while running:
 
 
     env.draw()
-
-    
-    # screen.fill(WHITE)
-    # for i in range(1,10):
-    #     pygame.draw.line(screen, GRAY, (0,i*escale), (SIZE-1, i*escale), 3)
-    # for i in range(1,10):
-    #     pygame.draw.line(screen, GRAY, (i*escale,0), (i*escale,SIZE-1), 3)
-
-    # pos = to_mapCoordinates(np.array([9,9], dtype=int))
-
-    # screen.blit(Food, pos)
-
 
 
     pygame.display.update()
