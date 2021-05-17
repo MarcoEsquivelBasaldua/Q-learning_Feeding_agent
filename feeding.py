@@ -5,8 +5,7 @@ import copy
 ##### Load trined Q-table ###
 #with open('Q_table.json', 'r') as f:
 #    Q = json.load(f)
-Q = np.load('Q-table.npy', allow_pickle= True)
-print(type(Q))
+Q = np.load('Q-table.npy', allow_pickle= True)[-1]
 #print(Q.item().get((0, 0, 0, 0)))
 
 
@@ -145,7 +144,8 @@ while running:
 
         # Player moves
         state = env.get_state()
-        action = np.argmax(Q.item().get(state))
+        #action = np.argmax(Q.item().get(state))
+        action = np.argmax(Q[state])
         env.player_move(action)
 
 

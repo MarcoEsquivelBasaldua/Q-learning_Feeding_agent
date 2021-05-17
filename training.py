@@ -18,7 +18,7 @@ MAX_EPSILON = 1.0
 MIN_EPSILON = 0.001
 DECAY_RATE = 0.01
 
-TOTAL_QTABLES = 2
+TOTAL_QTABLES = 5
 
 # Save two Q tables to see progress
 Q = []
@@ -97,14 +97,15 @@ class Environment:
 env = Environment()
 SHOW_EVERY = 500
 SAVE_QTABLE_EVERY = TOTAL_EPISODES // TOTAL_QTABLES
-
+hist_episodes = []
 
 for episode in range(1, TOTAL_EPISODES):
     # if episode % SHOW_EVERY == 0 or episode == TOTAL_EPISODES-1:
     #     print('Episode:', episode)
 
-    if episode % SAVE_QTABLE_EVERY == 0 or episode == TOTAL_EPISODES:
+    if episode % SAVE_QTABLE_EVERY == 0 or episode == TOTAL_EPISODES-1:
         print('Q-table saved at episode', episode)
+        hist_episodes.append(episode)
         QtoSave = copy.deepcopy(Q_current)
         Q.append(QtoSave)
 
@@ -138,3 +139,4 @@ print(end - start)
 
 # Save Q table
 np.save('Q-table.npy',Q)
+np.savetxt('Q-tables_historial_episodes.txt', hist_episodes, fmt='%d')
